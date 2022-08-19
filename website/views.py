@@ -55,5 +55,5 @@ def posts(username):
         flash(f"No user with {username} exist!", category='error')
         return redirect(url_for("views.home"))
 
-    posts = Post.query.filter_by(author=user.id).all()
+    posts = user.posts
     return render_template("posts.html", user=current_user, posts=posts, username=username)
