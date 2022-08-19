@@ -12,6 +12,10 @@
 
 <pre>python -m venv venv</pre>
 
+#### Activate virtual environment
+
+<pre>Windows: venv\Scripts\activate</pre>
+
 #### Install requirements
 
 <pre>pip install -r requirements.txt</pre>
