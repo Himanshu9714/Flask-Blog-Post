@@ -10,6 +10,7 @@ views = Blueprint("views", __name__)
 @views.route("/")
 @views.route("/home")
 def home():
+    # Get all posts from all users
     posts = Post.query.all()
     return render_template("home.html", user=current_user, posts=posts)
 
@@ -22,6 +23,7 @@ def create_post():
         if not text:
             flash("Post can't be empty!", category="error")
         else:
+            # Create a post
             post = Post(text=text, author=current_user.id)
             db.session.add(post)
             db.session.commit()
@@ -34,11 +36,13 @@ def create_post():
 @login_required
 def delete_post(id):
     post = Post.query.get(id)
+    # Check if post exist
     if not post:
         flash("Post doesn't exist!", category="error")
     elif current_user.id != post.id:
         flash("You don't have permission to delete this post!", category="error")
     else:
+        # Delete the post
         db.session.delete(post)
         db.session.commit()
         flash("Post deleted!", category="success")
@@ -55,6 +59,9 @@ def posts(username):
         flash(f"No user with {username} exist!", category="error")
         return redirect(url_for("views.home"))
 
+    # Can get all the posts related to the logged in user via user.posts, 
+    # as one to many relationship is there between post and user, and backref
+    # is user to get all the posts
     posts = user.posts
     return render_template(
         "posts.html", user=current_user, posts=posts, username=username
@@ -65,11 +72,13 @@ def posts(username):
 @login_required
 def create_comment(post_id):
     text = request.form.get("text")
+    # Check if comment is empty
     if not text:
         flash("Comment can't be empty!", category="error")
     else:
         post = Post.query.filter_by(id=post_id)
         if post:
+            # Create a comment
             comment = Comment(text=text, author=current_user.id, post_id=post_id)
             db.session.add(comment)
             db.session.commit()
@@ -85,9 +94,12 @@ def delete_comment(id):
     comment = Comment.query.get(id)
     if not comment:
         flash("Comment doesn't exist!", category="error")
+    # Check if comment and post is of current user
     elif current_user.id != comment.author and current_user.id != comment.post.id:
         flash("You don't have permission to delete this post!", category="error")
     else:
+        # The logged in user is allowed to delete the comments of post created by him. 
+        # And comments which he made on other posts.
         db.session.delete(comment)
         db.session.commit()
 

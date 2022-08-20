@@ -21,6 +21,7 @@ def login():
             # Check if password matches
             if check_password_hash(user.password, password):
                 flash("Logged In!", category="success")
+                # Login the user and set rememeber flag as true
                 login_user(user, remember=True)
                 return redirect(url_for("views.home"))
             else:
@@ -62,6 +63,7 @@ def sign_up():
             new_user = User(
                 email=email,
                 username=username,
+                # Stores hash password in db
                 password=generate_password_hash(password1, method="sha256"),
             )
             # Staging area
