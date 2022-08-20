@@ -28,6 +28,9 @@ class User(db.Model, UserMixin):
     # user.comments: Gives all comments related to user
     comments = db.relationship("Comment", backref="user", passive_deletes=True)
 
+    # user.likes: Gives all likes related to user
+    likes = db.relationship("Like", backref="user", passive_deletes=True)
+
 
 class Post(db.Model):
     """post_table"""
@@ -50,6 +53,9 @@ class Post(db.Model):
     # post.comments: Gives all comments related to post
     comments = db.relationship("Comment", backref="post", passive_deletes=True)
 
+    # post.likes: Gives all likes related to post
+    likes = db.relationship("Like", backref="post", passive_deletes=True)
+
 
 class Comment(db.Model):
     """comment_table"""
@@ -71,6 +77,25 @@ class Comment(db.Model):
 
     # One to many relationship from post to comments
     # A post can have multiple comments
+    post_id = db.Column(
+        db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False
+    )
+
+
+class Like(db.Model):
+    """like_table"""
+
+    # Unique id for each comment
+    id = db.Column(db.Integer, primary_key=True)
+
+    # One to many relationship from user to like
+    # A user can have multiple likes on different posts
+    author = db.Column(
+        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
+
+    # One to many relationship from post to like
+    # A post can have multiple likes
     post_id = db.Column(
         db.Integer, db.ForeignKey("post.id", ondelete="CASCADE"), nullable=False
     )
